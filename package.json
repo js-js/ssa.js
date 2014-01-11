@@ -1,0 +1,33 @@
+{
+  "name": "phi.js",
+  "version": "0.0.0",
+  "description": "CFG Phi Insertion helper",
+  "main": "lib/phi.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec test/*-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:indutny/phi.js"
+  },
+  "keywords": [
+    "CFG",
+    "Phi"
+  ],
+  "author": "Fedor Indutny <fedor@indutny.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/indutny/phi.js/issues"
+  },
+  "homepage": "https://github.com/indutny/phi.js",
+  "devDependencies": {
+    "mocha": "~1.17.0",
+    "ssa-ir": "~0.3.0"
+  },
+  "dependencies": {
+    "tarjan": "~0.5.0"
+  }
+}
