@@ -1,6 +1,6 @@
 {
   "name": "phi.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CFG Phi Insertion helper",
   "main": "lib/phi.js",
   "directories": {
