@@ -34,10 +34,10 @@ describe('Phi.js', function() {
         ret @a
     */}, function() {/*
       block B1
-        ssa/a0 = literal %0
+        ssa/0/a = literal %0
         i3 = literal %1
-        ssa/a1 = add ssa/a0, i3
-        ret ssa/a1
+        ssa/1/a = add ssa/0/a, i3
+        ret ssa/1/a
     */});
   });
 
@@ -55,14 +55,14 @@ describe('Phi.js', function() {
       block B1 -> B2, B3
         branch
       block B2 -> B4
-        ssa/a0 = literal %1
-        to_phi ssa/a1, ssa/a0
+        ssa/0/a = literal %1
+        to_phi ssa/1/a, ssa/0/a
       block B3 -> B4
-        ssa/a2 = literal %2
-        to_phi ssa/a1, ssa/a2
+        ssa/2/a = literal %2
+        to_phi ssa/1/a, ssa/2/a
       block B4
-        ssa/a1 = phi
-        ret ssa/a1
+        ssa/1/a = phi
+        ret ssa/1/a
     */});
 
     test('simple loop', function() {/*
@@ -77,17 +77,17 @@ describe('Phi.js', function() {
         ret @a
     */}, function() {/*
       block Entry -> Start
-        ssa/a0 = 0
-        to_phi ssa/a1, ssa/a0
+        ssa/0/a = 0
+        to_phi ssa/1/a, ssa/0/a
       block Start -> Body, Exit
-        ssa/a1 = phi
-        branch ssa/a1, 10
+        ssa/1/a = phi
+        branch ssa/1/a, 10
       block Body -> Start
         one = literal %1
-        ssa/a2 = add ssa/a1, one
-        to_phi ssa/a1, ssa/a2
+        ssa/2/a = add ssa/1/a, one
+        to_phi ssa/1/a, ssa/2/a
       block Exit
-        ret ssa/a1
+        ret ssa/1/a
     */});
   });
 });
