@@ -39,6 +39,20 @@ describe('Phi.js', function() {
         ssa/1/a = add ssa/0/a, i3
         ret ssa/1/a
     */});
+
+    test('linear flow with ids', function() {/*
+      block B1
+        @a = literal %0 # a
+        i3 = literal %1 # b
+        @a = add @a, i3 # c
+        ret @a
+    */}, function() {/*
+      block B1
+        ssa/0/a = literal %0 # a
+        i3 = literal %1 # b
+        ssa/1/a = add ssa/0/a, i3 # c
+        ret ssa/1/a
+    */});
   });
 
   describe('global phis', function() {
