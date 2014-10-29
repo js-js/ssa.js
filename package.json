@@ -1,8 +1,8 @@
 {
-  "name": "phi.js",
+  "name": "ssa.js",
   "version": "0.1.4",
-  "description": "CFG Phi Insertion helper",
-  "main": "lib/phi.js",
+  "description": "SSA Phi Insertion helper",
+  "main": "lib/ssa.js",
   "directories": {
     "test": "test"
   },
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:indutny/phi.js"
+    "url": "git@github.com:indutny/ssa.js"
   },
   "keywords": [
     "CFG",
@@ -20,12 +20,12 @@
   "author": "Fedor Indutny <fedor@indutny.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/indutny/phi.js/issues"
+    "url": "https://github.com/indutny/ssa.js/issues"
   },
-  "homepage": "https://github.com/indutny/phi.js",
+  "homepage": "https://github.com/indutny/ssa.js",
   "devDependencies": {
     "mocha": "~1.17.0",
-    "ssa-ir": "~0.3.0"
+    "cfg-ir": "^0.4.0"
   },
   "dependencies": {
     "tarjan": "~0.5.0"

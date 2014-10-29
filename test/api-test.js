@@ -1,8 +1,8 @@
 var assert = require('assert');
-var ssa = require('ssa-ir');
-var phi = require('..');
+var ir = require('cfg-ir');
+var ssa = require('..');
 
-describe('Phi.js', function() {
+describe('SSA.js', function() {
   function strip(source) {
     var lines = source.split(/\r\n|\r|\n/g);
 
@@ -18,7 +18,7 @@ describe('Phi.js', function() {
   function test(name, input, expected) {
 
     it('should support ' + name, function() {
-      var output = ssa.stringify(phi.run(ssa.parse(input)));
+      var output = ir.stringify(ssa.run(ir.parse(input)));
       var exp = expected.toString()
                         .replace(/^function.*{\/\*|\*\/}$/g, '');
       assert.equal(strip(output), strip(exp));
