@@ -25,7 +25,7 @@
     "dominance-frontier": "^1.0.0",
     "jscs": "^1.13.1",
     "jshint": "^2.8.0",
-    "json-pipeline": "^1.4.1",
+    "json-pipeline": "^1.5.1",
     "mocha": "~1.17.0"
   },
   "dependencies": {

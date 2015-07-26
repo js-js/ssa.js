@@ -211,4 +211,91 @@ describe('SSA.js', function() {
       }
     }
   */});
+
+  test('reduce phi in loop', function() {/*
+    pipeline {
+      b0 {
+      }
+      b0 -> b1
+
+      b1 {
+      }
+      b1 -> b2, b3
+
+      b2 {
+        i0 = literal 1
+        i1 = ssa:store 0, i0
+        i2 = ssa:load 0
+      }
+      b2 -> b1
+
+      b3 {
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+      }
+      b0 -> b1
+
+      b1 {
+      }
+      b1 -> b2, b3
+
+      b2 {
+        i0 = literal 1
+      }
+      b2 -> b1
+
+      b3 {
+      }
+    }
+  */});
+
+  test('insert `ssa:undefined` before control nodes', function() {/*
+    pipeline {
+      b0 {
+        i0 = if ^b0
+      }
+      b0 -> b1, b2
+
+      b1 {
+        i1 = jump ^b1
+      }
+      b1 -> b3
+
+      b2 {
+        i2 = literal 1
+        i3 = ssa:store 0, i2
+        i4 = jump ^b2
+      }
+      b2 -> b3
+
+      b3 {
+        i5 = ssa:load 0
+        i6 = return ^b3, i2
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+        i0 = if ^b0
+      }
+      b0 -> b1, b2
+      b1 {
+        i3 = ssa:undefined
+        i1 = jump ^b1
+      }
+      b1 -> b3
+      b2 {
+        i2 = literal 1
+        i4 = jump ^b2
+      }
+      b2 -> b3
+      b3 {
+        i5 = ssa:phi i3, i2
+        i6 = return ^b3, i2
+      }
+    }
+  */});
 });
