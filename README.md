@@ -1,5 +1,5 @@
 # SSA.js
-[![Build Status](https://secure.travis-ci.org/indutny/ssa.js.png)](http://travis-ci.org/js-js/ssa.js)
+[![Build Status](https://secure.travis-ci.org/js-js/ssa.js.png)](http://travis-ci.org/js-js/ssa.js)
 [![NPM version](https://badge.fury.io/js/ssa.js.svg)](http://badge.fury.io/js/ssa.js)
 
 Construction of minimal SSA form
