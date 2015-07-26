@@ -3,11 +3,8 @@
   "version": "0.8.0",
   "description": "SSA Phi Insertion helper",
   "main": "lib/ssa.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "mocha --reporter spec test/*-test.js"
+    "test": "jscs lib/*.js test/*.js && jshint lib/*.js && mocha --reporter spec test/*-test.js"
   },
   "repository": {
     "type": "git",
@@ -24,10 +21,15 @@
   },
   "homepage": "https://github.com/indutny/ssa.js",
   "devDependencies": {
-    "mocha": "~1.17.0",
-    "cfg-ir": "^0.4.0"
+    "assert-text": "^1.1.0",
+    "dominance-frontier": "^1.0.0",
+    "jscs": "^1.13.1",
+    "jshint": "^2.8.0",
+    "json-pipeline": "^1.4.1",
+    "mocha": "~1.17.0"
   },
   "dependencies": {
-    "tarjan": "~0.5.0"
+    "binary-search": "^1.2.0",
+    "bitfield.js": "^1.1.0"
   }
 }

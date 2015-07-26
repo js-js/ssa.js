@@ -1,107 +1,214 @@
-var assert = require('assert');
-var ir = require('cfg-ir');
-var ssa = require('..');
+var fixtures = require('./fixtures');
+var test = fixtures.test;
 
 describe('SSA.js', function() {
-  function strip(source) {
-    var lines = source.split(/\r\n|\r|\n/g);
+  test('linear control-flow', function() {/*
+    pipeline {
+      b0 {
+        i0 = ssa:load 0
+        i1 = print i0
+        i2 = literal 1
+        i3 = ssa:store 0, i2
+        i4 = literal 2
+        i5 = ssa:load 0
+        i6 = add i4, i5
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+        i0 = ssa:undefined
+        i1 = print i0
+        i2 = literal 1
+        i4 = literal 2
+        i3 = add i4, i2
+      }
+    }
+  */});
 
-    var out = lines.map(function(line) {
-      return line.replace(/^\s*/, '');
-    }).filter(function(line) {
-      return !!line;
-    });
+  test('across-the-block control-flow', function() {/*
+    pipeline {
+      b0 {
+        i0 = ssa:load 0
+        i1 = print i0
+        i2 = literal 1
+        i3 = ssa:store 0, i2
+      }
+      b0 -> b1
 
-    return out.join('\n');
-  }
+      b1 {
+        i4 = literal 2
+        i5 = ssa:load 0
+        i6 = add i4, i5
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+        i0 = ssa:undefined
+        i1 = print i0
+        i2 = literal 1
+      }
+      b0 -> b1
 
-  function test(name, input, expected) {
+      b1 {
+        i4 = literal 2
+        i3 = add i4, i2
+      }
+    }
+  */});
 
-    it('should support ' + name, function() {
-      var output = ir.stringify(ssa.run(ir.parse(input)));
-      var exp = expected.toString()
-                        .replace(/^function.*{\/\*|\*\/}$/g, '');
-      assert.equal(strip(output), strip(exp));
-    });
-  }
+  test('basic branch-merge', function() {/*
+    pipeline {
+      b0 {
+      }
+      b0 -> b1, b2
 
-  describe('local phis', function() {
-    test('linear flow', function() {/*
-      block B1
-        @a = literal %0
-        i3 = literal %1
-        @a = add @a, i3
-        ret @a
-    */}, function() {/*
-      block B1
-        ssa/0/a = literal %0
-        i3 = literal %1
-        ssa/1/a = add ssa/0/a, i3
-        ret ssa/1/a
-    */});
+      b1 {
+        i0 = literal 1
+        i1 = ssa:store 0, i0
+      }
+      b1 -> b3
 
-    test('linear flow with ids', function() {/*
-      block B1
-        @a = literal %0 # a
-        i3 = literal %1 # b
-        @a = add @a, i3 # c
-        ret @a
-    */}, function() {/*
-      block B1
-        ssa/0/a = literal %0 # a
-        i3 = literal %1 # b
-        ssa/1/a = add ssa/0/a, i3 # c
-        ret ssa/1/a
-    */});
-  });
+      b2 {
+        i2 = literal 2
+        i3 = ssa:store 0, i2
+      }
+      b2 -> b3
 
-  describe('global phis', function() {
-    test('if/else', function() {/*
-      block B1 -> B2, B3
-        branch
-      block B2 -> B4
-        @a = literal %1
-      block B3 -> B4
-        @a = literal %2
-      block B4
-        ret @a
-    */}, function() {/*
-      block B1 -> B2, B3
-        branch
-      block B2 -> B4
-        ssa/0/a = literal %1
-        to_phi ssa/1/a, ssa/0/a
-      block B3 -> B4
-        ssa/2/a = literal %2
-        to_phi ssa/1/a, ssa/2/a
-      block B4
-        ssa/1/a = phi
-        ret ssa/1/a
-    */});
+      b3 {
+        i4 = ssa:load 0
+        i5 = return i4
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+      }
+      b0 -> b1, b2
 
-    test('simple loop', function() {/*
-      block Entry -> Start
-        @a = 0
-      block Start -> Body, Exit
-        branch @a, 10
-      block Body -> Start
-        one = literal %1
-        @a = add @a, one
-      block Exit
-        ret @a
-    */}, function() {/*
-      block Entry -> Start
-        ssa/0/a = 0
-        to_phi ssa/1/a, ssa/0/a
-      block Start -> Body, Exit
-        ssa/1/a = phi
-        branch ssa/1/a, 10
-      block Body -> Start
-        one = literal %1
-        ssa/2/a = add ssa/1/a, one
-        to_phi ssa/1/a, ssa/2/a
-      block Exit
-        ret ssa/1/a
-    */});
-  });
+      b1 {
+        i0 = literal 1
+      }
+      b1 -> b3
+
+      b2 {
+        i2 = literal 2
+      }
+      b2 -> b3
+
+      b3 {
+        i1 = ssa:phi i0, i2
+        i3 = return i1
+      }
+    }
+  */});
+
+  /*
+   *        b0
+   *     /      \
+   *    b1       b5
+   *  /   \     /   \
+   * b2   b3   b6   b7
+   *  \   /     \   /
+   *    b4       b8
+   *     \      /
+   *        b9
+   */
+  test('nested branch-merge', function() {/*
+    pipeline {
+      b0 {
+        i0 = literal "pass-through"
+        i1 = ssa:store 1, i0
+      }
+      b0 -> b1, b5
+
+      b1 {
+      }
+      b1 -> b2, b3
+
+      b2 {
+        i2 = literal 1
+        i3 = ssa:store 0, i2
+      }
+      b2 -> b4
+
+      b3 {
+        i4 = literal 2
+        i5 = ssa:store 0, i4
+      }
+      b3 -> b4
+
+      b4 {
+      }
+      b4 -> b9
+
+      b5 {
+      }
+      b5 -> b6, b7
+
+      b6 {
+        i6 = literal 3
+        i7 = ssa:store 0, i6
+      }
+      b6 -> b8
+
+      b7 {
+       i8 = literal 4
+       i9 = ssa:store 0, i8
+      }
+      b7 -> b8
+
+      b8 {
+      }
+      b8 -> b9
+
+      b9 {
+        i10 = ssa:load 0
+        i11 = ssa:load 1
+        i12 = add i10, i11
+      }
+    }
+  */}, function() {/*
+    pipeline {
+      b0 {
+        i0 = literal "pass-through"
+      }
+      b0 -> b1, b5
+      b1 {
+      }
+      b1 -> b2, b3
+      b2 {
+        i2 = literal 1
+      }
+      b2 -> b4
+      b3 {
+        i4 = literal 2
+      }
+      b3 -> b4
+      b4 {
+        i13 = ssa:phi i2, i4
+      }
+      b4 -> b9
+      b5 {
+      }
+      b5 -> b6, b7
+      b6 {
+        i6 = literal 3
+      }
+      b6 -> b8
+      b7 {
+        i8 = literal 4
+      }
+      b7 -> b8
+      b8 {
+        i3 = ssa:phi i6, i8
+      }
+      b8 -> b9
+      b9 {
+        i9 = ssa:phi i13, i3
+        i12 = add i9, i0
+      }
+    }
+  */});
 });
