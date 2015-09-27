@@ -19,6 +19,7 @@ exports.test = function test(name, input, output) {
     frontier.create(p).compute();
     ssa.create(p).compute();
 
+    p.reindex();
     assertText.equal(p.render({ cfg: true }, 'printable'),
                      fn2str(output));
   });
