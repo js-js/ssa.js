@@ -1,6 +1,6 @@
 {
   "name": "ssa.js",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "SSA Phi Insertion helper",
   "main": "lib/ssa.js",
   "scripts": {
